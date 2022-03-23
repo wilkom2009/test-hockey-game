@@ -36,13 +36,13 @@ public class ApiController {
      * Exposes /api/team/{year} endpoint
      * 
      * @param year
-     * @return a Team json object
+     * @return a Team object
      */
     @GetMapping("/team/{year}")
-    public ResponseEntity<TeamDto> getTeamFromAYear(@PathVariable Long year) {
+    public ResponseEntity<?> getTeamFromAYear(@PathVariable Long year) {
         TeamDto dto = teamService.getTeamByYear(year);
         if (dto == null) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Year not found", HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
@@ -55,10 +55,10 @@ public class ApiController {
      * @return a Created player json object if year found
      */
     @PostMapping("/team/{Year}")
-    public ResponseEntity<PlayerDto> savePlayerDto(@PathVariable("Year") Long year, @RequestBody PlayerDto playerDto) {
+    public ResponseEntity<?> savePlayerDto(@PathVariable("Year") Long year, @RequestBody PlayerDto playerDto) {
         TeamDto teamDto = teamService.getTeamByYear(year);
         if (teamDto == null) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Year not found", HttpStatus.NOT_FOUND);
         }
         Team team = new Team(teamDto.getId(), teamDto.getCoach(), teamDto.getYear(), null);
         Player player = new Player(playerDto.getNumber(), playerDto.getName(), playerDto.getLastname(),
@@ -74,10 +74,10 @@ public class ApiController {
      * @return a PlayerDto json object if found
      */
     @PutMapping("/player/captain/{ID}")
-    public ResponseEntity<PlayerDto> updateYearTeamCaptain(@PathVariable("ID") Long id) {
+    public ResponseEntity<?> updateYearTeamCaptain(@PathVariable("ID") Long id) {
         PlayerDto playerDto = playerService.getPlayerById(id);
         if (playerDto == null) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("ID not found", HttpStatus.NOT_FOUND);
         }
         Player player = new Player(playerDto.getNumber(), playerDto.getName(), playerDto.getLastname(),
                 playerDto.getPosition(), playerDto.getIsCaptain(), null);
@@ -88,4 +88,5 @@ public class ApiController {
 
         return new ResponseEntity<>(playerService.savePlayer(player), HttpStatus.OK);
     }
+
 }
